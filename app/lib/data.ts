@@ -16,12 +16,12 @@ export async function fetchRevenue() {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
 
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    console.log('Fetching revenue data...');
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const data = await sql<Revenue[]>`SELECT * FROM revenue`;
-
-    // console.log('Data fetch completed after 3 seconds.');
+    
+    console.log('Data fetch completed after 3 seconds.');
 
     return data;
   } catch (error) {
@@ -32,6 +32,7 @@ export async function fetchRevenue() {
 
 export async function fetchLatestInvoices() {
   try {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     const data = await sql<LatestInvoiceRaw[]>`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
       FROM invoices
@@ -55,6 +56,8 @@ export async function fetchCardData() {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
     // how to initialize multiple queries in parallel with JS.
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
     const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
     const invoiceStatusPromise = sql`SELECT
@@ -67,6 +70,9 @@ export async function fetchCardData() {
       customerCountPromise,
       invoiceStatusPromise,
     ]);
+
+    console.log("......DATA.........")
+    console.log(data);
 
     const numberOfInvoices = Number(data[0][0].count ?? '0');
     const numberOfCustomers = Number(data[1][0].count ?? '0');
@@ -177,6 +183,8 @@ export async function fetchCustomers() {
       ORDER BY name ASC
     `;
 
+    console.log(customers);
+    console.log("xxxxxxxxxxxxxxxxxxx")
     return customers;
   } catch (err) {
     console.error('Database Error:', err);
@@ -216,3 +224,5 @@ export async function fetchFilteredCustomers(query: string) {
     throw new Error('Failed to fetch customer table.');
   }
 }
+
+
